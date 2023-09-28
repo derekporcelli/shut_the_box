@@ -12,47 +12,13 @@ public class Game
                 board = new Board(numberOfTiles, numberOfDice);
             }
         
-        public Board getBoard ()
-            {
-                return board;
-            }
-        
-        public boolean recursionIsStalemate (ArrayList<Tile> tiles, int value)
-            {
-                if(tiles.size() == 0 || value <= 0){
-                    return true;
-                }
-                for (Tile tile : tiles)
-                    {
-                        if (tile.getValue() == value)
-                            {
-                                return false;
-                            }
-                    }
-                for (Tile tile : tiles)
-                    {
-                        ArrayList<Tile> newTiles = new ArrayList<Tile>();
-                        for (int i = 0; i < tiles.size(); i++)
-                            {
-                                if (tiles.get(i) != tile)
-                                    {
-                                        newTiles.add(tiles.get(i));
-                                    }
-                            }
-                        if (!recursionIsStalemate(newTiles, value - tile.getValue()))
-                            {
-                                return false;
-                            }
-                    }
-                return true;
-            }
-        
         public static void main (String[] args)
             {
                 Game game = new Game(10, 2);
                 Board board = game.getBoard();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 System.out.println("Welcome to Shut the Box!");
+                int score = 0;
                 
                 boolean lastTurnWasValid = false;
                 while (true)
@@ -63,7 +29,7 @@ public class Game
                             }
                         int value = board.getValue();
                         System.out.println("\nRolled a " + value);
-    
+                        
                         for (int i = 0; i < board.getTiles().length; i++)
                             {
                                 Tile tile = board.getTiles()[i];
@@ -82,20 +48,21 @@ public class Game
                         ArrayList<Tile> newTiles = new ArrayList<Tile>();
                         for (int i = 0; i < board.getTiles().length; i++)
                             {
-                                if(board.getTiles()[i].isOpen())
+                                if (board.getTiles()[i].isOpen())
                                     {
                                         newTiles.add(board.getTiles()[i]);
                                     }
                             }
-                        if(game.recursionIsStalemate(newTiles, board.getValue()))
+                        if (game.recursionIsStalemate(newTiles, board.getValue()))
                             {
                                 System.out.println("Game over!");
                                 break;
                             }
-                        if(board.isShut()){
-                            System.out.println("You shut the box!");
-                            break;
-                        }
+                        if (board.isShut())
+                            {
+                                System.out.println("You shut the box!");
+                                break;
+                            }
                         
                         System.out.println("Which tiles do you want to shut?");
                         try
@@ -115,16 +82,19 @@ public class Game
                                     {
                                         throw new Exception();
                                     }
-                                for(int i = 0; i < inputArray.length; i++){
-                                    if(!board.getTiles()[Integer.parseInt(inputArray[i])-1].isOpen()){
-                                        throw new Exception();
+                                for (int i = 0; i < inputArray.length; i++)
+                                    {
+                                        if (! board.getTiles()[Integer.parseInt(inputArray[i]) - 1].isOpen())
+                                            {
+                                                throw new Exception();
+                                            }
                                     }
-                                }
                                 for (int i = 0; i < inputArray.length; i++)
                                     {
                                         int tileNumber = Integer.parseInt(inputArray[i]);
                                         Tile tile = board.getTiles()[tileNumber - 1];
                                         tile.shut();
+                                        score++;
                                     }
                             }
                         catch (Exception e)
@@ -134,5 +104,42 @@ public class Game
                             }
                     }
                 System.out.println("Thanks for playing!");
+                System.out.println("Your score was " + score);
+            }
+        
+        public Board getBoard ()
+            {
+                return board;
+            }
+        
+        public boolean recursionIsStalemate (ArrayList<Tile> tiles, int value)
+            {
+                if (tiles.size() == 0 || value <= 0)
+                    {
+                        return true;
+                    }
+                for (Tile tile : tiles)
+                    {
+                        if (tile.getValue() == value)
+                            {
+                                return false;
+                            }
+                    }
+                for (Tile tile : tiles)
+                    {
+                        ArrayList<Tile> newTiles = new ArrayList<Tile>();
+                        for (int i = 0; i < tiles.size(); i++)
+                            {
+                                if (tiles.get(i) != tile)
+                                    {
+                                        newTiles.add(tiles.get(i));
+                                    }
+                            }
+                        if (! recursionIsStalemate(newTiles, value - tile.getValue()))
+                            {
+                                return false;
+                            }
+                    }
+                return true;
             }
     }
